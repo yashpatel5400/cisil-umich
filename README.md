@@ -14,7 +14,7 @@ For Q1, the following data are relevant:
 ### Q1 Data Descriptions
 Here is a (long) set of descriptions of the relevant columns:
 
-apc_data_dictionary.xlsx
+### apc_data_dictionary.xlsx
 `SERVICE_CHANGE_NUM` : Three-digit code indicating the year and whether the service change is the first, second, or third service change of the year.  For example, the spring 2021 service change is SERVICE_CHANGE_NUM 211; the fall 2021 service change is SERVICE_CHANGE_NUM 212.
 
 `OPERATION_DATE` : The service date the recorded service operated.  This date is the service date, which generally runs from 4am one day to 4am the next day.  So, for instance, regular weekday service scheduled for Friday, October 25, 2019 would have an OPERATION_DATE of 2019-10-25 even if that service ran in the early AM hours of Saturday, October 26.
@@ -84,7 +84,7 @@ apc_data_dictionary.xlsx
 `HOLIDAY_NAME` : When applicable, indicates the name of a holiday or other day that may have atypical ridership.  Excluded from the TRIP_SUMMARY table.
 
 ------------------------------
-alltrips_data_dictionary.xlsx
+### alltrips_data_dictionary.xlsx
 `SERVICE_CHANGE_NUM` : Three-digit code indicating the year and whether the service change is the first, second, or third service change of the year.  For example, the spring 2021 service change is SERVICE_CHANGE_NUM 211; the fall 2021 service change is SERVICE_CHANGE_NUM 212. Note that in the years from 2000-2009, the leading zeroes are dropped, and this number will be either 1 or 2 digits long. For example, the Spring 2000 service change has SERVICE_CHANGE_NUM = 1 and Fall 2005 has SERVICE_CHANGE_NUM = 53.
 
 `MINOR_CHANGE_NUM` : Unique integer that identifies the biweekly period.  0 represents the service in effect on the first bi-weekly of the service change
@@ -136,7 +136,7 @@ alltrips_data_dictionary.xlsx
 `TRIP_DURATION_MNTS` : Duration of trip in minutes: SCHED_END_TIME_MNTS_AFTER_MIDNT - SCHED_START_TIME_MNTS_AFTER_MIDNT
 
 ------------------------------
-stop_activity_granular_data_dictionary.xlsx
+### stop_activity_granular_data_dictionary.xlsx
 `OPERATION_DATE` : The date on which the trip was observed in YYYY-MM-DD format
 
 `BOOKING_ID` : Shorthand code for the service change in a format expected by the Hastus NetPlan and ATP modules
