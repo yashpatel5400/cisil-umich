@@ -173,8 +173,6 @@ Here is a (long) set of descriptions of the relevant columns:
 
 ------------------------------
 
----
-
 ## Guide to the data for the CISIL Data Challenge
 
 This folder contains all relevant data for the policy questions posed in the CISIL Data Challenge. Thank you to King County Metro (KCM) for curating and providing these transportation data.
