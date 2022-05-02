@@ -14,7 +14,8 @@ ggplot(wa_tracts) +
 
 joined <- sf::st_join(sf::st_transform(stops, crs=4269), wa_tracts, join=sf::st_within)
 out <- joined %>%
-  dplyr::select(!!!syms(c(colnames(stops), "GEOID"))) %>%
+  as.data.frame() %>%
+  dplyr::select(!!!syms(c(dplyr::setdiff(colnames(stops), "geometry"), "GEOID"))) %>%
   dplyr::filter(!is.na(GEOID)) %>%  # drop the stops that are outside King County
   dplyr::mutate_at("GEOID", as.numeric)
 
