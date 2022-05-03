@@ -11,6 +11,31 @@ For Q1, the following data are relevant:
 `Question 1_ Fare Reinstatement/*.csv` : data about rides (the excel files are just descriptions of what the columns mean)
 `King_County_ACS_2019_tract.csv` : demographics from recent Census
 
+King County Metro uses the following notation:
+* A **trip** is a single bus route
+* Each trip follows a sequence of **stops**
+
+### Merging Q1 Datasets
+The `stop_activity*.csv` file contains the number of passengers who enter and exit the bus at each stop. It has ID columns:
+* `KEY_BLOCK_NUM`: ID combining indicator of weekday/Saturday/Sunday, `BLOCK_RTE_NUM`, and `BLOCK_RUN_NUM`
+* `TRIP_ID`: unique ID for the trip
+* `STOP_ID`: unique ID for the stop
+* `BOOKING_ID`: ID of the service change, corresponds with `SERVICE_CHANGE_NUM` in other datasets but is formatted slightly differently
+
+To merge `stop_activity` with `alltrips`, one will need to create a `SERVICE_CHANGE_NUM` column for the `stop_activity` using the following code:
+```{python}
+stops["SERVICE_CHANGE_NUM"] = [202 if c.find("SUM") == 0 else 203 for c in stops["BOOKING_ID"]]
+```
+Additionally, one must join to `alltrips` after removing the `MINOR_CHANGE_NUM` column (a column that more or less indicates the week of the month) and dropping duplicate rows. In other words, join to the following dataframe:
+```{python}
+trips[[c for c in trips if c != "MINOR_CHANGE_NUM"]].drop_duplicates()
+```
+One can then join the stops data to this dataframe on `KEY_BLOCK_NUM`, `TRIP_ID`, and `SERVICE_CHANGE_NUM`.
+
+To join the stop location data in `stops_with_tract_ids.shp` to `stop_activity`, join on `STOP_ID` after ensuring the column is type `int` in both dataframes.
+
+To join the ACS data in `King_County_ACS_2019_tract.csv` to `stop_location`, join on `GEOID` after ensuring the column is type `int` in both dataframes.
+
 ### Q1 Data Descriptions
 Here is a (long) set of descriptions of the relevant columns:
 
@@ -208,13 +233,13 @@ Question 1: Fare Reinstatement folder contains the detailed automated passenger 
     -   apc_data_dictionary.xlsx [Master data dictionary for APC data, includes more variables than those made available in the data files.]
 
     -   apc_detailed_09-01-2020_10-31-2020.csv [Route-level APC data]
-    
+
     -   alltrips_2020-09_to_2020-10.csv [file of all scheduled KCM trips]
-    
+
     -   alltrips_data_dictionary.xlsx [data dictionary corresponding to alltrips_2020-09_to_2020-10.csv]
-    
+
     -   stop_activity_granular_2020-09-01_2020-10-31.csv [Stop-level APC data]
-    
+
     -   stop_activity_granular_data_dictionary.xlsx [data dictionary corresponding to stop_activity_granular_2020-09-01_2020-10-31.csv]
 
 Question 2: Fare Subsidies folder contains the ORCA LIFT data:
@@ -226,11 +251,11 @@ Question 2: Fare Subsidies folder contains the ORCA LIFT data:
     -   LIFT_registry.csv [includes registry data from March 1, 2017 to May 3, 2021]
 
     -   LIFT_sales.csv [includes sales data from March 5, 2017 to October 31, 2021]
-    
+
     -   LIFT_boardings_2021-11-01_to_2022-03-06.csv [includes boardings data from November 11, 2021 to March 6, 2022; can be appended to LIFT_boardings.csv]
-    
+
     -   LIFT_registry_2022-03-22.csv [includes registry data from March 1, 2017 to March 22, 2022]
-    
+
     -   LIFT_sales_2021-11-01_to_2022-03-06.csv [includes sales data from November 1, 2021 to March 6, 2022; can be appended to LIFT_sales.csv]
 
 Remaining Files:
