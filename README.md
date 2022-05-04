@@ -9,28 +9,27 @@ For Q1, the following data are relevant:
 
 `KCM_Stops_Data/`: GIS spatial data (stop locations & attributes)
 `Question 1_ Fare Reinstatement/*.csv` : data about rides (the excel files are just descriptions of what the columns mean)
+* `alltrips_2020-09_to_2020-10.csv`: summary details for every route--which will be called a **trip** henceforth--such as first stop, last stop, expected trip duration in minutes and miles
+* `apc_detailed_09-01-2020_10-31-2020.csv`: summary details for every ride--a single pass of a trip--such as total passengers that rode, number of miles ridden by the passengers, actual duration of the ride in minutes and miles
+* `stop_activity_granular_2020-09-01_2020-10-31.csv`: details for every stop of every ride, such as number of passengers entering and exiting the bus and the number of passengers staying on the bus when it leaves the stop
 `King_County_ACS_2019_tract.csv` : demographics from recent Census
 
-King County Metro uses the following notation:
-* A **trip** is a single bus route
-* Each trip follows a sequence of **stops**
-
 ### Merging Q1 Datasets
-The `stop_activity*.csv` file contains the number of passengers who enter and exit the bus at each stop. It has ID columns:
-* `KEY_BLOCK_NUM`: ID combining indicator of weekday/Saturday/Sunday, `BLOCK_RTE_NUM`, and `BLOCK_RUN_NUM`
-* `TRIP_ID`: unique ID for the trip
-* `STOP_ID`: unique ID for the stop
-* `BOOKING_ID`: ID of the service change, corresponds with `SERVICE_CHANGE_NUM` in other datasets but is formatted slightly differently
-
-To merge `stop_activity` with `alltrips`, one will need to create a `SERVICE_CHANGE_NUM` column for the `stop_activity` using the following code:
-```{python}
-stops["SERVICE_CHANGE_NUM"] = [202 if c.find("SUM") == 0 else 203 for c in stops["BOOKING_ID"]]
-```
-Additionally, one must join to `alltrips` after removing the `MINOR_CHANGE_NUM` column (a column that more or less indicates the week of the month) and dropping duplicate rows. In other words, join to the following dataframe:
+Minor data recording nuisances make it difficult to uniquely ID rows in `alltrips`, but by and large it can be done by first dropping the `MINOR_CHANGE_NUM` column like so:
 ```{python}
 trips[[c for c in trips if c != "MINOR_CHANGE_NUM"]].drop_duplicates()
 ```
-One can then join the stops data to this dataframe on `KEY_BLOCK_NUM`, `TRIP_ID`, and `SERVICE_CHANGE_NUM`.
+then ID'ing using:
+* `SERVICE_CHANGE_NUM`
+* `KEY_BLOCK_NUM`
+* `TRIP_ID`
+`stop_activity` has `KEY_BLOCK_NUM` and `TRIP_ID` but not `SERVICE_CHANGE_NUM`, so it must be created using `BOOKING_ID` as shown below:
+```{python}
+stops["SERVICE_CHANGE_NUM"] = [202 if c.find("SUM") == 0 else 203 for c in stops["BOOKING_ID"]]
+```
+* `STOP_ID`: unique ID for the stop
+
+One can then join `trips` and `stop_activity` using `KEY_BLOCK_NUM`, `TRIP_ID`, and `SERVICE_CHANGE_NUM`.
 
 To join the stop location data in `stops_with_tract_ids.shp` to `stop_activity`, join on `STOP_ID` after ensuring the column is type `int` in both dataframes.
 
